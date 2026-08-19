@@ -9,4 +9,4 @@
 // FastTFT.show()
 
 
-FastTFT.bananas(2);
+FastTFT.bananas();
