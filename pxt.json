@@ -9,7 +9,8 @@
     "files": [
         "README.md",
         "main.blocks",
-        "main.ts"
+        "main.ts",
+        "fasttft.cpp"
     ],
     "testFiles": [
         "test.ts"
