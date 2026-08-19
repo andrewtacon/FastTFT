@@ -1,95 +1,84 @@
 
 namespace FastTFT {
 
-    // let simCanvas: HTMLCanvasElement = null
-    // let ctx: CanvasRenderingContext2D = null
     let fb: number[] = []
 
     //% block
+    //% shim=FastTFT::ensure
     function ensure() {
-        // if (!simCanvas) {
-        //     simCanvas = document.createElement("canvas")
-        //     simCanvas.width = 128
-        //     simCanvas.height = 128
-        //     simCanvas.style.width = "256px"
-        //     simCanvas.style.height = "256px"
-        //     simCanvas.style.imageRendering = "pixelated"
-        //     document.body.appendChild(simCanvas)
-        //     ctx = simCanvas.getContext("2d")
-        let a = pins.createBuffer(128*128)
-        fb = a.toArray(0)
-        
-        clearFramebuffer(0)
-        // }
+        return
     }
 
     //% block
-    export function init() { ensure() }
+    //% shim=FastTFT::init
+    export function init() {
+        return
+    }
 
     //% block
-    export function setSPISpeed(hz: number) { ensure() }
+    //% shim=FastTFT::setSPISpeed
+    export function setSPISpeed(hz: number) {
+        return
+    }
 
     //% block
+    //% shim=FastTFT::rgb
     export function rgb(red: number, green: number, blue: number): number {
-        return ((red & 0xf8) << 8) | ((green & 0xfc) << 3) | (blue >> 3)
+        return 0
     }
 
-    function css(c: number): string {
-        let r = ((c >> 11) & 31) * 255 / 31
-        let g = ((c >> 5) & 63) * 255 / 63
-        let b = (c & 31) * 255 / 31
-        return `rgb(${r},${g},${b})`
-    }
+
+    // //% block
+    // //% shim=FastTFT::css
+    // function css(c: number): string {
+    //     return ``
+    // }
 
     //% block
+    //% shim=FastTFT::clear
     export function clear(color: number) {
-        // ensure(); 
-        // ctx.fillStyle=css(color); 
-        // ctx.fillRect(0,0,128,128) 
+        return
     }
 
     //% block
+    //% shim=FastTFT::fillRect
     export function fillRect(x: number, y: number, w: number, h: number, color: number) {
-        //  ensure(); 
-        //  ctx.fillStyle=css(color); 
-        //  ctx.fillRect(x,y,w,h) 
+        return
     }
 
     //% block
-    export function pixel(x: number, y: number, color: number) { fillRect(x, y, 1, 1, color) }
+    //% shim=FastTFT::pixel
+    export function pixel(x: number, y: number, color: number) { return }
 
     //% block
-    export function hLine(x: number, y: number, l: number, c: number) { fillRect(x, y, l, 1, c) }
+    //% shim=FastTFT::hLine
+    export function hLine(x: number, y: number, l: number, c: number) { return }
 
     //% block
-    export function vLine(x: number, y: number, l: number, c: number) { fillRect(x, y, 1, l, c) }
+    //% shim=FastTFT::vLine
+    export function vLine(x: number, y: number, l: number, c: number) { return }
 
     //% block
+    //% shim=FastTFT::createFrameBuffer
     export function createFramebuffer() {
-        ensure();
-        if (!fb.length) {
-            let a = pins.createBuffer(128*128)
-            fb = a.toArray(0)
-                } //fb = new Array(16384)
+        return
     }
 
     //% block
-    export function clearFramebuffer(c: number) { createFramebuffer(); for (let i = 0; i < fb.length; i++) fb[i] = c }
+    //% shim=FastTFT::clearFrameBuffer
+    export function clearFramebuffer(c: number) { return }
 
     //% block
-    export function setPixel(x: number, y: number, c: number) { createFramebuffer(); if (x >= 0 && x < 128 && y >= 0 && y < 128) fb[y * 128 + x] = c }
+    //% shim=FastTFT::setPixel
+    export function setPixel(x: number, y: number, c: number) { return }
 
     //% block
-    export function fillFramebufferRect(x: number, y: number, w: number, h: number, c: number) { createFramebuffer(); for (let yy = Math.max(0, y); yy < Math.min(128, y + h); yy++) for (let xx = Math.max(0, x); xx < Math.min(128, x + w); xx++) fb[yy * 128 + xx] = c }
+    //% shim=FastTFT::fillFramebufferRect
+    export function fillFramebufferRect(x: number, y: number, w: number, h: number, c: number) { return }
 
     //% block
+    //% shim=FastTFT::show
     export function show() {
-        createFramebuffer();
-        // for(let y=0;y<128;y++) {
-        //     for(let x=0;x<128;x++) { 
-        //         ctx.fillStyle=css(fb[y*128+x]||0); 
-        //         ctx.fillRect(x,y,1,1)
-        //     } 
-        // }   
+        return
     }
 }

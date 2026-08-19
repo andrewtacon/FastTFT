@@ -162,15 +162,18 @@ namespace FastTFT
         initialized = true;
     }
 
-    static void ensureInit()
-    {
-        if (!initialized)
-            begin();
-    }
-
-    //% color=#275C6B icon="\uf26c" block="Fast TFT 128"
     namespace api
     {
+        //% shim=FastTFT::ensure
+        void ensure()
+        {
+            if (!initialized)
+                begin();
+        }
+
+        // //% color=#275C6B icon="\uf26c" block="Fast TFT 128"
+        // namespace api
+        // {
 
         /** Initialise the ST7735 TFT. */
         //% block="initialize TFT"
@@ -186,7 +189,7 @@ namespace FastTFT
         //% weight=98
         void setSPISpeed(int hz)
         {
-            ensureInit();
+            ensure();
             pins::spiFrequency(hz);
         }
 
@@ -217,7 +220,7 @@ namespace FastTFT
         //% weight=95
         void clear(int color)
         {
-            ensureInit();
+            ensure();
             fillRect(0, 0, WIDTH, HEIGHT, color);
         }
 
@@ -227,7 +230,7 @@ namespace FastTFT
         //% weight=90
         void fillRect(int x, int y, int width, int height, int color)
         {
-            ensureInit();
+            ensure();
             if (width <= 0 || height <= 0)
                 return;
             int x0 = x, y0 = y, x1 = x + width - 1, y1 = y + height - 1;
@@ -262,7 +265,7 @@ namespace FastTFT
         //% weight=80
         void pixel(int x, int y, int color)
         {
-            ensureInit();
+            ensure();
             if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
                 return;
             cs(0);
@@ -290,7 +293,7 @@ namespace FastTFT
         //% weight=75
         void createFramebuffer()
         {
-            ensureInit();
+            ensure();
             if (!framebuffer)
                 framebuffer = mkBuffer(NULL, WIDTH * HEIGHT * 2);
         }
