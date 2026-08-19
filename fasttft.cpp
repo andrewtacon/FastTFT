@@ -162,9 +162,8 @@ namespace FastTFT
         initialized = true;
     }
 
-    namespace api
-    {
-        //% shim=FastTFT::ensure
+    // namespace api
+    // {
         void ensure()
         {
             if (!initialized)
@@ -365,6 +364,6 @@ namespace FastTFT
             pins::spiTransfer(framebuffer, NULL);
             cs(1);
         }
-
-    }
+// 
+    // }
 }
