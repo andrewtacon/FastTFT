@@ -16,9 +16,7 @@ namespace FastTFT {
         //     simCanvas.style.imageRendering = "pixelated"
         //     document.body.appendChild(simCanvas)
         //     ctx = simCanvas.getContext("2d")
-        fb = []
-        fb.length = 128 * 128
-
+        fb = Array(128*128)
         clearFramebuffer(0)
         // }
     }
@@ -68,8 +66,7 @@ namespace FastTFT {
     export function createFramebuffer() {
         ensure();
         if (!fb.length) {
-            fb = []
-            fb.length = 128 * 128
+            fb = Array(128*128)
         } //fb = new Array(16384)
     }
 
