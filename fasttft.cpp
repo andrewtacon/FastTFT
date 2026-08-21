@@ -19,8 +19,8 @@
 
 namespace FastTFT
 {
-    static const int WIDTH = 132;
-    static const int HEIGHT = 132;
+    static const int WIDTH = 128;
+    static const int HEIGHT = 128;
 
     static const int SWRESET = 0x01;
     static const int SLPOUT  = 0x11;
@@ -74,7 +74,6 @@ namespace FastTFT
     static void spiByte(uint8_t value)
     {
         if (!spi)
-        
             configureSPI();
 
         spi->write(value);
@@ -284,15 +283,13 @@ namespace FastTFT
         int count = (x1 - x0 + 1) * (y1 - y0 + 1);
         Buffer b = mkBuffer(NULL, count * 2);
 
-        // uint8_t hi = (color >> 8) & 0xff;
-        // uint8_t lo = color & 0xff;
+        uint8_t hi = (color >> 8) & 0xff;
+        uint8_t lo = color & 0xff;
 
-        // for (int n = 0, p = 0; n < count; ++n)
-        for (int n = 0; n < count; ++n)
+        for (int n = 0, p = 0; n < count; ++n)
         {
-            b->data[n] = color;
-            // b->data[p++] = hi;
-            // b->data[p++] = lo;
+            b->data[p++] = hi;
+            b->data[p++] = lo;
         }
 
         cs(0);
@@ -320,10 +317,8 @@ namespace FastTFT
             return;
 
         Buffer b = mkBuffer(NULL, 2);
-        // b->data[0] = (color >> 8) & 0xff;
-        // b->data[1] = color & 0xff;
-        b->data[0] = color;
-        b->data[1] = color;
+        b->data[0] = (color >> 8) & 0xff;
+        b->data[1] = color & 0xff;
 
         cs(0);
         setWindow(x, y, x, y);
@@ -354,7 +349,7 @@ namespace FastTFT
         ensure();
 
         if (!framebuffer)
-            framebuffer = mkBuffer(NULL, WIDTH * HEIGHT);
+            framebuffer = mkBuffer(NULL, WIDTH * HEIGHT * 2);
     }
 
     //% block="clear framebuffer with color $color"
@@ -363,15 +358,13 @@ namespace FastTFT
     {
         createFramebuffer();
 
-        // uint8_t hi = (color >> 8) & 0xff;
-        // uint8_t lo = color & 0xff;
+        uint8_t hi = (color >> 8) & 0xff;
+        uint8_t lo = color & 0xff;
 
-        // for (int i = 0, p = 0; i < WIDTH * HEIGHT; ++i)
-        for (int i = 0; i < WIDTH * HEIGHT; ++i)
+        for (int i = 0, p = 0; i < WIDTH * HEIGHT; ++i)
         {
-            framebuffer->data[i] = color
-            // framebuffer->data[p++] = hi;
-            // framebuffer->data[p++] = lo;
+            framebuffer->data[p++] = hi;
+            framebuffer->data[p++] = lo;
         }
     }
 
@@ -385,13 +378,9 @@ namespace FastTFT
         if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
             return;
 
-        int p = (y * WIDTH + x);//    *2;
-
-        framebuffer->data[p] = color;
-
-        // framebuffer->data[p] = (color >> 8) & 0xff;
-        // framebuffer->data[p + 1] = color & 0xff;
-    
+        int p = (y * WIDTH + x) * 2;
+        framebuffer->data[p] = (color >> 8) & 0xff;
+        framebuffer->data[p + 1] = color & 0xff;
     }
 
     //% block="fill framebuffer rectangle x $x y $y width $width height $height color $color"
@@ -415,19 +404,17 @@ namespace FastTFT
         if (x0 > x1 || y0 > y1)
             return;
 
-
-        // uint8_t hi = (color >> 8) & 0xff;
-        // uint8_t lo = color & 0xff;
+        uint8_t hi = (color >> 8) & 0xff;
+        uint8_t lo = color & 0xff;
 
         for (int yy = y0; yy <= y1; ++yy)
         {
-            int p = (yy * WIDTH + x0);//      *2;
+            int p = (yy * WIDTH + x0) * 2;
 
             for (int xx = x0; xx <= x1; ++xx)
             {
-                framebuffer->data[p] = color;
-                // framebuffer->data[p++] = hi;
-                // framebuffer->data[p++] = lo;
+                framebuffer->data[p++] = hi;
+                framebuffer->data[p++] = lo;
             }
         }
     }
@@ -439,7 +426,7 @@ namespace FastTFT
         createFramebuffer();
 
         cs(0);
-        setWindow(0, 0, 132, 132);
+        setWindow(0, 0, 127, 127);
 
         // 32,768 bytes in one native CODAL SPI transfer.
         spiBuffer(framebuffer);
