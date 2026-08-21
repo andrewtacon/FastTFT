@@ -19,8 +19,8 @@
 
 namespace FastTFT
 {
-    static const int WIDTH = 64;
-    static const int HEIGHT = 64;
+    static const int WIDTH = 128;
+    static const int HEIGHT = 128;
 
     static const int SWRESET = 0x01;
     static const int SLPOUT  = 0x11;
@@ -86,9 +86,9 @@ namespace FastTFT
             configureSPI();
 
         if (b && b->length)
-            for (int i = 0; i < b->length; ++i){
+            for (int i = 0; i < b->length; i++){
                 spi->write(b->data[i]);
-                spi->write(b->data[i]);
+                // spi->write(b->data[i]);
             }
 
             // spi->transfer((const char*)b->data, b->length, NULL, 0);
