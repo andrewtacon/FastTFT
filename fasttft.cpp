@@ -74,6 +74,7 @@ namespace FastTFT
     static void spiByte(uint8_t value)
     {
         if (!spi)
+        
             configureSPI();
 
         spi->write(value);
