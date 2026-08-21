@@ -45,7 +45,8 @@ namespace FastTFT
     static const int GMCTRN1 = 0xE1;
 
     static SPI *spi = NULL;
-    static Buffer framebuffer = NULL;
+    static Buffer framebuffer = mkBuffer(NULL, WIDTH *HEIGHT);
+    //NULL;
     static bool initialized = false;
 
     static void dc(int value)
@@ -262,21 +263,21 @@ namespace FastTFT
     
     
     
-    //% block="create framebuffer"
-    //% weight=75
-    void createFramebuffer()
-    {
-        ensure();
+    // //% block="create framebuffer"
+    // //% weight=75
+    // void createFramebuffer()
+    // {
+    //     ensure();
 
-        if (!framebuffer)
-            framebuffer = mkBuffer(NULL, WIDTH * HEIGHT);
-    }
+    //     if (!framebuffer)
+    //         framebuffer = mkBuffer(NULL, WIDTH * HEIGHT);
+    // }
 
     //% block="clear framebuffer with color $color"
     //% weight=74
     void clearFramebuffer(int color)
     {
-        createFramebuffer();
+        // createFramebuffer();
 
         for (int i = 0; i < WIDTH * HEIGHT; i++)
         {
@@ -289,7 +290,7 @@ namespace FastTFT
     //% weight=73
     void setPixel(int x, int y, int color)
     {
-        createFramebuffer();
+        // createFramebuffer();
 
         if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
             return;
@@ -303,7 +304,7 @@ namespace FastTFT
     //% weight=72
     void fillFramebufferRect(int x, int y, int width, int height, int color)
     {
-        createFramebuffer();
+        // createFramebuffer();
 
         if (width <= 0 || height <= 0)
             return;
@@ -336,7 +337,7 @@ namespace FastTFT
     //% weight=70
     void show()
     {
-        createFramebuffer();
+        // createFramebuffer();
 
         cs(0);
         setWindow(0, 0, 127, 127);

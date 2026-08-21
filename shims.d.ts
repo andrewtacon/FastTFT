@@ -18,11 +18,6 @@ declare namespace FastTFT {
     //% weight=60 shim=FastTFT::rgb
     function rgb(red: int32, green: int32, blue: int32): int32;
 
-    /** Allocate the 32 KB RGB565 framebuffer. */
-    //% block="create framebuffer"
-    //% weight=75 shim=FastTFT::createFramebuffer
-    function createFramebuffer(): void;
-
     /** Clear framebuffer without sending it to the display. */
     //% block="clear framebuffer with color $color"
     //% weight=74 shim=FastTFT::clearFramebuffer
