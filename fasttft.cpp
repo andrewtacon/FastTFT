@@ -278,7 +278,7 @@ namespace FastTFT
     {
         createFramebuffer();
 
-        for (int i = 0; i < WIDTH * HEIGHT; ++i)
+        for (int i = 0; i < WIDTH * HEIGHT; i++)
         {
             framebuffer->data[i] = color;
         }
@@ -326,7 +326,8 @@ namespace FastTFT
 
             for (int xx = x0; xx <= x1; ++xx)
             {
-                framebuffer->data[++p] = color;
+                framebuffer->data[p] = color;
+                p = p + 1;
             }
         }
     }

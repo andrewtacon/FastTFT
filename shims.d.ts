@@ -18,24 +18,6 @@ declare namespace FastTFT {
     //% weight=60 shim=FastTFT::rgb
     function rgb(red: int32, green: int32, blue: int32): int32;
 
-    /** Fast filled rectangle; one display window and one pixel stream. */
-    //% block="fast filled rectangle x $x y $y width $width height $height color $color"
-    //% x.min=0 x.max=127 y.min=0 y.max=127 width.min=1 width.max=128 height.min=1 height.max=128
-    //% weight=90 shim=FastTFT::fillRect
-    function fillRect(x: int32, y: int32, width: int32, height: int32, color: int32): void;
-
-    /** Clear the complete 128x128 display. */
-    //% block="clear screen with color $color"
-    //%
-    //% weight=95 color.defl=0 shim=FastTFT::clear
-    function clear(color?: int32): void;
-
-    /** Draw one pixel. Use framebuffer functions for many pixels. */
-    //% block="fast pixel x $x y $y color $color"
-    //% x.min=0 x.max=127 y.min=0 y.max=127
-    //% weight=80 shim=FastTFT::pixel
-    function pixel(x: int32, y: int32, color: int32): void;
-
     /** Allocate the 32 KB RGB565 framebuffer. */
     //% block="create framebuffer"
     //% weight=75 shim=FastTFT::createFramebuffer
