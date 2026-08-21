@@ -1,6 +1,6 @@
 {
     "name": "local",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "description": "",
     "dependencies": {
         "core": "*",
@@ -13,8 +13,7 @@
         "main.ts",
         "fasttft.cpp"
     ],
-    "testFiles": [
-    ],
+    "testFiles": [],
     "public": true,
     "supportedTargets": [
         "microbit"
