@@ -5,7 +5,7 @@ namespace FastTFT {
 
     //% block
     //% shim=FastTFT::ensure
-    function ensure() {
+    export function ensure() {
         return
     }
 

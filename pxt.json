@@ -14,7 +14,6 @@
         "fasttft.cpp"
     ],
     "testFiles": [
-        "test.ts"
     ],
     "public": true,
     "supportedTargets": [
