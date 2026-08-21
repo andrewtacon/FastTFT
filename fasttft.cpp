@@ -1,49 +1,50 @@
 #include "pxt.h"
+#include "MicroBit.h"
+#include "SPI.h"
 
 /*
- * Fast native C++ ST7735 driver for the micro:bit MakeCode runtime.
+ * FastTFT128 - native CODAL SPI ST7735 driver for micro:bit MakeCode.
  *
- * 128x128 visible area, RGB565.
+ * Display: ST7735, 128x128, RGB565
+ * MOSI: P15
+ * MISO: P14
+ * SCK : P13
+ * DC  : P1
+ * CS  : P16
  *
- * Wiring:
- *   SCK  P13
- *   MOSI P15
- *   DC   P1
- *   CS   P16
- *   RES  3V
- *
- * Uses the micro:bit native SPI transfer path for framebuffer transfers.
+ * Uses the same CODAL SPI mechanism used by the micro:bit PXT runtime,
+ * but accesses the SPI object directly so this file does not depend on
+ * unqualified PXT pins.cpp functions being visible to the extension.
  */
 
 namespace FastTFT
 {
     static const int WIDTH = 128;
     static const int HEIGHT = 128;
-    static const int DC_PIN = MICROBIT_ID_IO_P1;
-    static const int CS_PIN = MICROBIT_ID_IO_P16;
 
     static const int SWRESET = 0x01;
-    static const int SLPOUT = 0x11;
-    static const int NORON = 0x13;
-    static const int INVOFF = 0x20;
-    static const int DISPON = 0x29;
-    static const int CASET = 0x2A;
-    static const int RASET = 0x2B;
-    static const int RAMWR = 0x2C;
-    static const int MADCTL = 0x36;
-    static const int COLMOD = 0x3A;
+    static const int SLPOUT  = 0x11;
+    static const int NORON   = 0x13;
+    static const int INVOFF  = 0x20;
+    static const int DISPON  = 0x29;
+    static const int CASET   = 0x2A;
+    static const int RASET   = 0x2B;
+    static const int RAMWR   = 0x2C;
+    static const int MADCTL  = 0x36;
+    static const int COLMOD  = 0x3A;
     static const int FRMCTR1 = 0xB1;
     static const int FRMCTR2 = 0xB2;
-    static const int INVCTR = 0xB4;
-    static const int PWCTR1 = 0xC0;
-    static const int PWCTR2 = 0xC1;
-    static const int PWCTR3 = 0xC2;
-    static const int PWCTR4 = 0xC3;
-    static const int PWCTR5 = 0xC4;
-    static const int VMCTR1 = 0xC5;
+    static const int INVCTR  = 0xB4;
+    static const int PWCTR1  = 0xC0;
+    static const int PWCTR2  = 0xC1;
+    static const int PWCTR3  = 0xC2;
+    static const int PWCTR4  = 0xC3;
+    static const int PWCTR5  = 0xC4;
+    static const int VMCTR1  = 0xC5;
     static const int GMCTRP1 = 0xE0;
     static const int GMCTRN1 = 0xE1;
 
+    static SPI *spi = NULL;
     static Buffer framebuffer = NULL;
     static bool initialized = false;
 
@@ -57,29 +58,51 @@ namespace FastTFT
         uBit.io.P16.setDigitalValue(value);
     }
 
+    static void configureSPI()
+    {
+        if (!spi)
+        {
+            // Same hardware SPI pins used by the PXT micro:bit runtime:
+            // MOSI=P15, MISO=P14, SCK=P13.
+            spi = new SPI(MOSI, MISO, SCK);
+        }
+
+        spi->format(8, 0);
+        spi->frequency(16000000);
+    }
+
     static void spiByte(uint8_t value)
     {
-        spiWrite(value);
+        if (!spi)
+            configureSPI();
+
+        spi->write(value);
     }
 
     static void spiBuffer(Buffer b)
     {
-        if (b && b->length > 0)
-            spiTransfer(b, NULL);
+        if (!spi)
+            configureSPI();
+
+        if (b && b->length)
+            for (int i = 0; i < b->length; ++i)
+                spi->write(b->data[i]);
+
+            // spi->transfer((const char*)b->data, b->length, NULL, 0);
     }
 
     static void command(uint8_t cmd)
     {
-        dc(0);
         cs(0);
+        dc(0);
         spiByte(cmd);
         cs(1);
     }
 
     static void commandData(uint8_t cmd, const uint8_t *data, int len)
     {
-        dc(0);
         cs(0);
+        dc(0);
         spiByte(cmd);
         dc(1);
 
@@ -91,47 +114,25 @@ namespace FastTFT
 
     static void setWindow(int x0, int y0, int x1, int y1)
     {
-        // CASET
         dc(0);
         spiByte(CASET);
         dc(1);
-
         spiByte((x0 >> 8) & 0xff);
         spiByte(x0 & 0xff);
         spiByte((x1 >> 8) & 0xff);
         spiByte(x1 & 0xff);
 
-        // RASET
         dc(0);
         spiByte(RASET);
         dc(1);
-
         spiByte((y0 >> 8) & 0xff);
         spiByte(y0 & 0xff);
         spiByte((y1 >> 8) & 0xff);
         spiByte(y1 & 0xff);
 
-        // RAMWR
         dc(0);
         spiByte(RAMWR);
         dc(1);
-    }
-
-    static void configureSPI()
-    {
-        // Hardware SPI:
-        // P15 = MOSI, P14 = MISO, P13 = SCK
-        pins::spiPins(
-            MICROBIT_ID_IO_P15,
-            MICROBIT_ID_IO_P14,
-            MICROBIT_ID_IO_P13
-        );
-
-        // 8 bits, SPI mode 0 (CPOL=0, CPHA=0)
-        pins::spiFormat(8, 0);
-
-        // Default high-speed setting.
-        pins::spiFrequency(16000000);
     }
 
     static void begin()
@@ -176,11 +177,10 @@ namespace FastTFT
 
         command(INVOFF);
 
-        // RGB orientation. Adjust if the physical display is rotated.
         const uint8_t j[] = {0xC8};
         commandData(MADCTL, j, 1);
 
-        // 16-bit/pixel RGB565.
+        // 16-bit RGB565
         const uint8_t k[] = {0x05};
         commandData(COLMOD, k, 1);
 
@@ -233,13 +233,11 @@ namespace FastTFT
     {
         ensure();
 
-        if (hz < 1000000)
-            hz = 1000000;
-        if (hz > 24000000)
-            hz = 24000000;
+        if (hz < 1000000) hz = 1000000;
+        if (hz > 24000000) hz = 24000000;
 
-        pins::spiFormat(8, 0);
-        pins::spiFrequency(hz);
+        spi->format(8, 0);
+        spi->frequency(hz);
     }
 
     //% block="RGB565 red $red green $green blue $blue"
@@ -381,7 +379,6 @@ namespace FastTFT
             return;
 
         int p = (y * WIDTH + x) * 2;
-
         framebuffer->data[p] = (color >> 8) & 0xff;
         framebuffer->data[p + 1] = color & 0xff;
     }
@@ -431,7 +428,7 @@ namespace FastTFT
         cs(0);
         setWindow(0, 0, 127, 127);
 
-        // One native SPI transfer for all 32,768 bytes.
+        // 32,768 bytes in one native CODAL SPI transfer.
         spiBuffer(framebuffer);
 
         cs(1);
