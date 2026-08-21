@@ -1,7 +1,7 @@
 
 namespace FastTFT {
 
-    let fb: number[] = []
+    // let fb: number[] = []
 
     //% block
     //% shim=FastTFT::ensure
