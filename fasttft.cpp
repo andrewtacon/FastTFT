@@ -19,8 +19,8 @@
 
 namespace FastTFT
 {
-    static const int WIDTH = 128;
-    static const int HEIGHT = 128;
+    static const int WIDTH = 64;
+    static const int HEIGHT = 64;
 
     static const int SWRESET = 0x01;
     static const int SLPOUT  = 0x11;
