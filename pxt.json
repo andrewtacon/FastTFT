@@ -11,6 +11,7 @@
         "README.md",
         "main.blocks",
         "main.ts",
+        "fasttft.ts",
         "fasttft.cpp"
     ],
     "testFiles": [],
